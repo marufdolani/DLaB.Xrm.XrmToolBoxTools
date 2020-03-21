@@ -303,7 +303,12 @@ namespace DLaB.EarlyBoundGenerator
 
         private string GetUrlString()
         {
-            var orgName = ConnectionDetail.OrganizationUrlName;
+            //BUG: OrganizationUrlName is null in the latest Online version. This bug is causing an unhandled exception crashing XrmToolbox.
+            //var orgName = ConnectionDetail.OrganizationUrlName;
+            int startIndex = ConnectionDetail.WebApplicationUrl.LastIndexOf('/') + 1;
+            int length = ConnectionDetail.WebApplicationUrl.IndexOf('.') - startIndex;
+
+            var orgName = (ConnectionDetail.OrganizationUrlName == null) ? ConnectionDetail.WebApplicationUrl.Substring(startIndex, length) : ConnectionDetail.OrganizationUrlName;
             var onPremUrl = ConnectionDetail.WebApplicationUrl;
             onPremUrl = onPremUrl != null && !onPremUrl.ToLower().EndsWith(orgName.ToLower())
                 ? onPremUrl + orgName
